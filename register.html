@@ -17,14 +17,23 @@
     </div>
     <button id="captureButton">Capture</button>
 
-    <button id="goToSceen2Button">Go to register Window</button>
+    <div id="formContainer" style="display: none">
+      <h2>Enter your name:</h2>
+      <input type="text" id="nameInput" placeholder="Your name" />
+      <button id="sendButton">Send</button>
+    </div>
+
+    <button onclick="goToFirstWindow()">
+      Go to Main Window
+    </button>
 
     <script>
       const videoElement = document.getElementById("videoElement");
       const captureButton = document.getElementById("captureButton");
 
       const formContainer = document.getElementById("formContainer");
-      const btnChange = document.getElementById("goToSceen2Button");
+      const nameInput = document.getElementById("nameInput");
+      const sendButton = document.getElementById("sendButton");
 
       // Access the camera stream
       navigator.mediaDevices
@@ -60,19 +69,43 @@
         // Show the form container
         formContainer.style.display = "block";
 
-        console.log("Hello");
-        const ipc = window.require("electron").ipcRenderer;
-        ipc.send("openChildWindow");
-        
         // Do something with the captured image data
         console.log(imageDataURL);
       });
 
-      const { ipcRenderer } = require('electron');
-      btnChange.addEventListener("click", () => {
-        console.log("Hello");
-        ipcRenderer.send("openChildWindow");
+      // Send the captured image and name to the API
+      sendButton.addEventListener("click", () => {
+        const name = nameInput.value;
+
+        // Make an API request with the captured image data and name
+        fetch("your-api-url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            image: capturedImageDataURL,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Handle the response from the API
+            console.log(data);
+          })
+          .catch((error) => {
+            console.error("Error sending data to the API: ", error);
+          });
       });
+
+      const remote = window.require("electron").remote;
+
+      function goToFirstWindow() {
+        //code for some other action to be performed
+
+        //Code to close the window after doing other actions
+        remote.getCurrentWindow().close();
+      }
     </script>
   </body>
 </html>

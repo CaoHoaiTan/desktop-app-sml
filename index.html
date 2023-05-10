@@ -59,10 +59,6 @@
 
         // Show the form container
         formContainer.style.display = "block";
-
-        console.log("Hello");
-        const ipc = window.require("electron").ipcRenderer;
-        ipc.send("openChildWindow");
         
         // Do something with the captured image data
         console.log(imageDataURL);
@@ -70,7 +66,6 @@
 
       const { ipcRenderer } = require('electron');
       btnChange.addEventListener("click", () => {
-        console.log("Hello");
         ipcRenderer.send("openChildWindow");
       });
     </script>

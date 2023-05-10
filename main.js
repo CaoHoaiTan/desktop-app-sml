@@ -1,21 +1,34 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
-
+const path = require("path");
+  
+let mainWindow;
+  
+// Function to create independent window or main window
 function createWindow() {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    // Make sure to add webPreferences with
+    // nodeIntegration and contextIsolation
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+    show: false,
   });
-
-  win.loadFile('index.html');
+  
+  // Main window loads index.html file
+  mainWindow.loadFile("index.html");
+  
+  // To maximize the window
+  mainWindow.maximize();
+  mainWindow.show();
 }
-
+  
 // Function to create child window of parent one
 function createChildWindow() {
   childWindow = new BrowserWindow({
-    width: 700,
+    width: 1000,
     height: 700,
     modal: true,
     show: false,
@@ -36,10 +49,8 @@ function createChildWindow() {
     childWindow.show();
   });
 }
-
-
+  
 ipcMain.on("openChildWindow", (event, arg) => {
-  console.log("hello");
   createChildWindow();
 });
   

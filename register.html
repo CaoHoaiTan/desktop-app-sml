@@ -23,9 +23,7 @@
       <button id="sendButton">Send</button>
     </div>
 
-    <button onclick="goToFirstWindow()">
-      Go to Main Window
-    </button>
+    <button onclick="goToFirstWindow()">Go to Main Window</button>
 
     <script>
       const videoElement = document.getElementById("videoElement");
@@ -57,20 +55,32 @@
         // Draw the current video frame onto the canvas
         context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-        // Convert the canvas image to a data URL
-        const imageDataURL = canvas.toDataURL("image/png");
+        // Convert the canvas image to a Blob
+        canvas.toBlob((blob) => {
+          // Create a FormData object
+          const formData = new FormData();
 
-        // Create a temporary link element to download the image
-        // const link = document.createElement('a');
-        // link.href = imageDataURL;
-        // link.download = 'captured_image.png';
-        // link.click();
+          // Append the captured image file to the FormData
+          formData.append("image", blob, "captured_image.png");
 
-        // Show the form container
-        formContainer.style.display = "block";
+          // Append other form data
+          const name = nameInput.value;
+          formData.append("name", name);
 
-        // Do something with the captured image data
-        console.log(imageDataURL);
+          // Send the captured image and other form data to the API
+          fetch("your-api-url", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Handle the response from the API
+              console.log(data);
+            })
+            .catch((error) => {
+              console.error("Error sending data to the API: ", error);
+            });
+        }, "image/png");
       });
 
       // Send the captured image and name to the API
